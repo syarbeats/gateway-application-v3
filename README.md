@@ -10,7 +10,7 @@ secret key sharing between gateway application and its microservices.
 1. Service Registry: https://github.com/syarbeats/service-registry.git
 2. Blog-config: https://github.com/syarbeats/blog-config.git
 3. Blog-app-config: https://github.com/syarbeats/configuration-server.git
-4. Blog Microservice
+4. Blog Microservice: https://github.com/syarbeats/blog-microservices-v3.git
 
 
 ## The Stacks:
