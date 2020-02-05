@@ -36,6 +36,9 @@ zuul:
     gateway:
       stripPrefix: true
       sensitiveHeaders:
+    approval:
+      stripPrefix: true
+      sensitiveHeaders:
 
   host:
     connect-timeout-millis: 10000
