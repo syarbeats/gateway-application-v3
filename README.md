@@ -11,6 +11,7 @@ secret key sharing between gateway application and its microservices.
 2. Blog-config: https://github.com/syarbeats/blog-config.git
 3. Blog-app-config: https://github.com/syarbeats/configuration-server.git
 4. Blog Microservice: https://github.com/syarbeats/blog-microservices-v3.git
+5. Approval Microservice: https://github.com/syarbeats/approval-service.git
 
 ## URL
 1. Spring Eureuka URL: http://localhost:8761/
