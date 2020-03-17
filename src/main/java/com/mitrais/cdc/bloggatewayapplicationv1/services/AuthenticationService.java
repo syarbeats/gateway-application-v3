@@ -15,6 +15,7 @@ import com.mitrais.cdc.bloggatewayapplicationv1.payload.LoginResponse;
 import com.mitrais.cdc.bloggatewayapplicationv1.payload.TokenPayload;
 import com.mitrais.cdc.bloggatewayapplicationv1.repository.UserRepository;
 import com.mitrais.cdc.bloggatewayapplicationv1.security.jwt.JwtTokenProvider;
+import io.reactivex.Single;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.*;
@@ -95,4 +96,36 @@ public class AuthenticationService {
 
         return new LoginResponse(true, "You have login successfully", new TokenPayload(username, token));
     }
+
+    /**************************************************************************
+     * Reactive api version
+     *************************************************************************/
+    public Single<LoginResponse> loginV2(@Nonnull AuthenticationPayload user){
+        log.info("Login through reactive api version...");
+        String username = user.getUsername();
+        String password = user.getPassword();
+
+        @CheckForNull
+        User userLogin = userRepository.findByUsername(username);
+
+        return Single.create(loginProcess -> {
+            try {
+                authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            }catch(DisabledException e){
+                loginProcess.onError(new DisabledException("Account is disabled"));
+            }catch(BadCredentialsException e){
+                loginProcess.onError(new BadCredentialsException("Bad Credential"));
+            }catch(InternalAuthenticationServiceException e){
+                loginProcess.onError(new InternalAuthenticationServiceException("Internal Authentication Service Error"));
+            }catch (UsernameNotFoundException e){
+                loginProcess.onError(new UsernameNotFoundException("Username not found."));
+            }catch(HttpServerErrorException e){
+                loginProcess.onError(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+            }
+
+            loginProcess.onSuccess(new LoginResponse(true,"You have login successfully",new TokenPayload(username, jwtTokenProvider.createToken(username, userLogin.getRoles()))));
+        });
+    }
+
+
 }

@@ -12,6 +12,8 @@ package com.mitrais.cdc.bloggatewayapplicationv1.controller;
 import com.mitrais.cdc.bloggatewayapplicationv1.payload.AuthenticationPayload;
 import com.mitrais.cdc.bloggatewayapplicationv1.payload.LoginResponse;
 import com.mitrais.cdc.bloggatewayapplicationv1.services.AuthenticationService;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,5 +49,12 @@ public class AuthenticationController extends CrossOriginController {
     public ResponseEntity<LoginResponse> login(@RequestBody @Nonnull AuthenticationPayload authenticationPayload){
 
         return ResponseEntity.ok(authenticationService.login(authenticationPayload));
+    }
+
+    @PostMapping("/authentication-v2")
+    public Single<ResponseEntity<LoginResponse>> loginV2(@RequestBody @Nonnull AuthenticationPayload authenticationPayload){
+        return authenticationService.loginV2(authenticationPayload)
+                .subscribeOn(Schedulers.io())
+                .map(login -> ResponseEntity.ok(login));
     }
 }
